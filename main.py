@@ -13,6 +13,7 @@ import RPi.GPIO as GPIO
 import time
 import sys
 from hx711 import HX711
+from lcd1602 import LCD1602
 import pygame
 
 # Force Python 3 ###########################################################
@@ -46,8 +47,10 @@ EXTRA_LARGE = 2.25
 JUMBO = 2.5
 
 
-#load cell object
+#load cell object using gpio 5 and 6 
 hx = HX711(5, 6)
+
+lcd = LCD1602()
 
 # Initializing pygame surface
 # surface = pygame.display.set_mode((WIDTH,HEIGHT), pygame.RESIZABLE | pygame.SCALED )
@@ -99,6 +102,9 @@ class Weight:
 weight = Weight()
 
 def cleanAndExit():
+    lcd.lcd_text("", 1)
+    lcd.lcd_text("", 2)
+    
     print("Cleaning...")
     GPIO.cleanup()
     print("Bye!")
@@ -145,6 +151,9 @@ def loop():
         oz = weight.update_weight(grams_to_oz(val))
         oz = round(oz, 2)
         print("weight", grams_to_oz(val))
+        
+        lcd.lcd_text(weight.get_mode_string() + " EGG", 1)
+        lcd.lcd_text(str(oz) + "oz", 2)
         
         font = pygame.font.Font(None, 75)
         text = font.render(weight.get_mode_string() + " = " + str(oz) + "oz", True, WHITE, BLACK)
