@@ -1,0 +1,16 @@
+GPIO 6 	-> sck on hx711 load cell
+GPIO 5 	-> DT on hx711 load cell
+GPIO 18 -> D7 on LCD
+GPIO 23 -> D6 on LCD
+GPIO 24 -> D5 on LCD
+GPIO 25 -> D4 on LCD
+GPIO 8	-> E on LCD
+GPIO 7  -> RS on LCD
+5v 		-> VCC on hx711 load cell
+		-> VDD on LCD
+		-> A on LCD
+Ground 	-> GND on hx711 load cell
+		-> VSS on LCD
+		-> 2k resistor -> V0 on LCD
+		-> RW on LCD
+		-> K on LCD

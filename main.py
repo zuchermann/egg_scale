@@ -146,7 +146,7 @@ def loop():
         oz = round(oz, 2)
         print("weight", grams_to_oz(val))
         
-        font = pygame.font.Font(None, 50)
+        font = pygame.font.Font(None, 75)
         text = font.render(weight.get_mode_string() + " = " + str(oz) + "oz", True, WHITE, BLACK)
         text_rect = text.get_rect()
         text_rect.center = (surface.get_width() // 2, surface.get_height() // 2)
