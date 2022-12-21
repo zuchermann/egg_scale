@@ -35,6 +35,8 @@ BLUE = (0, 0, 128)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
+
+
 #MIN_CHANGE is the minimum weight change (in oz) before values are updated
 MIN_CHANGE = 0.1
 #NUM_PASS is the number of measurements to let throgh when a change is detected
@@ -46,11 +48,17 @@ LARGE = 2.0
 EXTRA_LARGE = 2.25
 JUMBO = 2.5
 
+RED_LED = 4 #red led is out of GPIO pin 4
+YELLOW_LED = 12
+GREEN_LED = 13
+ORANGE_LED = 22
+BLUE_LED = 26
+LEDs = [RED_LED, YELLOW_LED, GREEN_LED, ORANGE_LED, BLUE_LED]
 
 #load cell object using gpio 5 and 6 
 hx = HX711(5, 6)
 
-lcd = LCD1602()
+lcd = LCD1602() #go into LCD code to see which GIO are being used
 
 # Initializing pygame surface
 # surface = pygame.display.set_mode((WIDTH,HEIGHT), pygame.RESIZABLE | pygame.SCALED )
@@ -67,6 +75,7 @@ class Weight:
         self.mode_str = ["NO", "SMALL", "MEDIUM", "LARGE", "EXTRA_LARGE", "JUMBO"]
         self.mode_color = [BLACK, RED, YELLOW, GREEN, ORANGE, BLUE]
         
+        
     def update_weight(self, weight_oz):
         #first detect if there was a change in any case
         if abs(self.current_weight - weight_oz) > MIN_CHANGE:
@@ -79,10 +88,20 @@ class Weight:
             self.change_counter += 1
         else:
             pass
-        if self.current_weight < MIN_CHANGE:
+        if abs(self.current_weight) < MIN_CHANGE:
             return 0
         else:
             return self.current_weight
+            
+    def update_LEDs(self):
+        current_mode = self.get_mode()
+        current_mode = current_mode - 1
+        for i in range(len(LEDs)):
+            gpio_pin = LEDs[i]
+            if i == current_mode:
+                GPIO.output(gpio_pin, GPIO.HIGH)
+            else:
+                GPIO.output(gpio_pin, GPIO.LOW)
     
     def get_mode(self):
         if self.current_weight < SMALL: return 0
@@ -98,8 +117,8 @@ class Weight:
     def get_mode_color(self):
         return(self.mode_color[self.get_mode()])
         
-
-weight = Weight()
+weight = Weight() #define weign objuect to maintin state for filtering
+        
 
 def cleanAndExit():
     lcd.lcd_text("", 1)
@@ -130,7 +149,6 @@ def setup():
     # Initializing Pygame
     pygame.init()
   
-    
   
     # Initialing RGB Color 
     color = (255,0, 0)
@@ -139,6 +157,16 @@ def setup():
     surface.fill(color)
     pygame.display.flip()
     pygame.mouse.set_visible(False)
+    
+    """
+    cone run once to set up GPIO for LEDs
+    """
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(RED_LED, GPIO.OUT)
+    GPIO.setup(YELLOW_LED, GPIO.OUT)
+    GPIO.setup(GREEN_LED, GPIO.OUT)
+    GPIO.setup(ORANGE_LED, GPIO.OUT)
+    GPIO.setup(BLUE_LED, GPIO.OUT)
 
 
 def loop():
@@ -148,9 +176,12 @@ def loop():
 
     try:
         val = hx.get_grams(1)
+        #get weight in onces, stabilized, and rounded to two decimals
         oz = weight.update_weight(grams_to_oz(val))
         oz = round(oz, 2)
         print("weight", grams_to_oz(val))
+        
+        weight.update_LEDs()
         
         lcd.lcd_text(weight.get_mode_string() + " EGG", 1)
         lcd.lcd_text(str(oz) + "oz", 2)
@@ -164,6 +195,7 @@ def loop():
         # Draws the surface object to the screen.
         pygame.display.update()
 
+        #handle exiting the program
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
