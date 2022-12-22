@@ -1,8 +1,10 @@
-import RPi.GPIO as GPIO # Import Raspberry Pi GPIO library
-GPIO.setwarnings(False) # Ignore warning for now
-GPIO.setmode(GPIO.BCM) # Use gpio pin numbering
-GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # Set pin 10 to be an input pin and set initial value to be pulled low (off)
+import RPi.GPIO as GPIO          #Import GPIO library
+import time                      #Import time library
+GPIO.setmode(GPIO.BCM)         #Set GPIO pin numbering
+GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_UP) #Enable input and pull up resistors
 
-while True: # Run forever
-    if GPIO.input(27) == GPIO.HIGH:
-        print("Button was pushed!")
+while True:
+    input_state = GPIO.input(27) #Read and store value of input to a variable
+    if input_state == False:     #Check whether pin is grounded
+       print('Button Pressed')   #Print 'Button Pressed'
+       time.sleep(0.3)           #Delay of 0.3s

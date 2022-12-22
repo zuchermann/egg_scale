@@ -54,6 +54,7 @@ GREEN_LED = 13
 ORANGE_LED = 22
 BLUE_LED = 26
 LEDs = [RED_LED, YELLOW_LED, GREEN_LED, ORANGE_LED, BLUE_LED]
+BUTTON_PIN = 27
 
 #load cell object using gpio 5 and 6 
 hx = HX711(5, 6)
@@ -167,6 +168,10 @@ def setup():
     GPIO.setup(GREEN_LED, GPIO.OUT)
     GPIO.setup(ORANGE_LED, GPIO.OUT)
     GPIO.setup(BLUE_LED, GPIO.OUT)
+    
+    GPIO.setmode(GPIO.BCM)         #Set GPIO pin numbering
+    GPIO.setup(BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP) #Enable input and pull up resistors
+
 
 
 def loop():
@@ -179,12 +184,17 @@ def loop():
         #get weight in onces, stabilized, and rounded to two decimals
         oz = weight.update_weight(grams_to_oz(val))
         oz = round(oz, 2)
-        print("weight", grams_to_oz(val))
+        # print("weight", grams_to_oz(val))
         
         weight.update_LEDs()
         
         lcd.lcd_text(weight.get_mode_string() + " EGG", 1)
         lcd.lcd_text(str(oz) + "oz", 2)
+        
+        input_state = GPIO.input(BUTTON_PIN) #Read and store value of input to a variable
+        if input_state == False:     #Check whether pin is grounded
+            hx.tare()
+            print('Zero Button Pressed')   #Print 'Button Pressed'
         
         font = pygame.font.Font(None, 75)
         text = font.render(weight.get_mode_string() + " = " + str(oz) + "oz", True, WHITE, BLACK)

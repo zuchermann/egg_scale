@@ -11,7 +11,7 @@ GPIO 23 -> D6 on LCD
 GPIO 24 -> D5 on LCD
 GPIO 25 -> D4 on LCD
 GPIO 26	-> Blue LED Cathode
-GPIO 27	-> 10k resistor -> zeroing switch
+GPIO 27	-> zeroing switch
 
 5v 		-> VCC on hx711 load cell
 		-> VDD on LCD
