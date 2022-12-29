@@ -12,7 +12,7 @@ Scale breaks egg sizes into the following ranges:
 import RPi.GPIO as GPIO
 import time
 import sys
-from hx711 import HX711
+from hx711_Dohnalek import HX711
 from lcd1602 import LCD1602
 import pygame
 

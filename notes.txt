@@ -1,0 +1,7 @@
+rbpi python bindings for hx711: https://github.com/endail/hx711-rpi-py
+	original c++ library: https://github.com/endail/hx711
+
+	install notes for endail library:
+		install lgpio: https://abyz.me.uk/lg/download.html
+		install the c++ library
+		install python bindings
