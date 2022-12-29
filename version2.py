@@ -57,7 +57,7 @@ LEDs = [RED_LED, YELLOW_LED, GREEN_LED, ORANGE_LED, BLUE_LED]
 BUTTON_PIN = 27
 
 #load cell object using gpio 5 and 6 
-hx = SimpleHX711(5, 6, 384, 37768) #to calibrate, use file: 
+hx = SimpleHX711(5, 6, 383, 37890) #to calibrate, use file: 
 							#/egg_scale/hx711_test/endail.calibrate.py
 
 lcd = LCD1602() #go into LCD code to see which GPIO are being used
@@ -74,8 +74,8 @@ class Weight:
         self.current_weight = 0
         self.change_detected = False
         self.change_counter = 0
-        self.mode_str = ["NO", "SMALL", "MEDIUM", "LARGE", "EXTRA_LARGE", "JUMBO"]
-        self.mode_color = [BLACK, RED, YELLOW, GREEN, ORANGE, BLUE]
+        self.mode_str = ["PEEWEE", "SMALL", "MEDIUM", "LARGE", "EXTRA LARGE", "JUMBO"]
+        self.mode_color = [WHITE, RED, YELLOW, GREEN, ORANGE, BLUE]
         
         
     def update_weight(self, weight_oz):
@@ -114,10 +114,16 @@ class Weight:
         else: return 5
         
     def get_mode_string(self):
-        return(self.mode_str[self.get_mode()])
+        if self.current_weight <= MIN_CHANGE:
+            return "no"
+        else:
+            return(self.mode_str[self.get_mode()])
         
     def get_mode_color(self):
-        return(self.mode_color[self.get_mode()])
+        if self.current_weight <= MIN_CHANGE:
+            return BLACK
+        else:
+            return(self.mode_color[self.get_mode()])
         
 weight = Weight() #define weign objuect to maintin state for filtering
         
@@ -195,7 +201,7 @@ def loop():
             hx.zero()
             print('Zero Button Pressed')   #Print 'Button Pressed'
         
-        font = pygame.font.Font(None, 75)
+        font = pygame.font.Font(None, 150)
         text = font.render(weight.get_mode_string() + " = " + str(oz) + "oz", True, WHITE, BLACK)
         text_rect = text.get_rect()
         text_rect.center = (surface.get_width() // 2, surface.get_height() // 2)
