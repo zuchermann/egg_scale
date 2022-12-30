@@ -163,6 +163,7 @@ def setup():
     surface.fill(color)
     pygame.display.flip()
     pygame.mouse.set_visible(False)
+    pygame.display.set_caption('Egg Scale')
     
     """
     cone run once to set up GPIO for LEDs
